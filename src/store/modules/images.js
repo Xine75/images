@@ -11,10 +11,10 @@ const getters = {
 
 const actions = {
     //rootState gives the ability to reach into any other modules and access state
-    async fetchImages({ rootState }){
+    async fetchImages({ rootState, commit }){
         const token = rootState.auth.token;
         const response = await api.fetchImages(token);
-        console.log(response);
+        commit("setImages", response.data.data);
     }
 };
 
