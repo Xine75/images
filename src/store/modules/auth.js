@@ -1,27 +1,32 @@
-
-import api from "../../api/imgur"
+import api from "../../api/imgur";
+import qs from "qs";
+import { router } from "../../main";
 
 
 const state = {
-    token: null
+    token: window.localStorage.getItem("imgur_token")
 };
 
 //returns a boolean: true if there is a token, false if token is null. that is the function of the "!!"
 const getters = {
     isLoggedIn: (state) => !!state.token
-
 };
-
 
 const actions = {
     login: () => {
         api.login();
     },
-    //"commit" key word calls a mutation
-    //passing "null" to set token to null
-    logout: ({ commit })=> {
-        commit("setToken", null)
+    finalizeLogin ({ commit }, hash) {
+        const query = qs.parse(hash.replace("#", ""));
+        commit("setToken", query.access_token);
+        window.localStorage.setItem("imgur_token", query.access_token);
+        router.push("/");
     },
+    logout: ({ commit })=> {
+        commit("setToken", null);
+        window.localStorage.removeItem("imgur_token")
+    },
+
 
 };
 
@@ -36,4 +41,4 @@ export default  {
     getters,
     actions,
     mutations
-}
+};
